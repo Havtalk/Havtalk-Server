@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  // password      String
+  username      String        @unique
+  // firstName     String
+  // lastName      String
+  avatar        String?
+  googleId      String?       @unique
+  createdAt     DateTime      @default(now())
+  characters    Character[]   @relation("UserCharacters")
+  sessions      ChatSession[]
+  isVerified    Boolean       @default(false)
+  refreshToken  String?
+  name          String
+  emailVerified Boolean @default(false)
+  image         String?
+  updatedAt     DateTime     @updatedAt
+  accounts      Account[]
+
+  Session         Session[]
+  displayUsername String?
+  personas        UserPersona[] @relation("UserToUserPersona")
+
+  @@map("user")
+}
+
+model Character {
+  id       String        @id @default(uuid())
+  name     String
+  personality  String
+  description String
+  environment String?
+  avatar   String?
+  additionalInfo String?
+  isPublic Boolean       @default(false)
+  owner    User          @relation(fields: [ownerId], references: [id], name: "UserCharacters")
+  sessions ChatSession[]
+  ownerId  String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model ChatSession {
+  id          String        @id @default(uuid())
+  userId      String
+  characterId String
+  environment String?
+  user        User          @relation(fields: [userId], references: [id])
+  userpersonaId String?
+  userpersona  UserPersona? @relation(fields: [userpersonaId], references: [id])
+  character   Character     @relation(fields: [characterId], references: [id])
+  messages    ChatMessage[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  isPublic    Boolean       @default(false)
+  title       String?
+}
+
+model UserPersona {
+  id          String        @id @default(uuid())
+  userId      String
+  name        String
+  description String
+  avatar      String?
+  personality String
+  createdAt   DateTime      @default(now())
+  user        User          @relation(fields: [userId], references: [id], name: "UserToUserPersona")
+
+  ChatSession ChatSession[]
+}
+
+
+model ChatMessage {
+  id        String      @id @default(uuid())
+  sessionId String
+  content   String
+  role      MessageRole
+  createdAt DateTime    @default(now())
+  session   ChatSession @relation(fields: [sessionId], references: [id])
+}
+
+enum MessageRole {
+  USER
+  AI
+  SYSTEM
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
