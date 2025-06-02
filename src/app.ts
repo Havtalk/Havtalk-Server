@@ -17,29 +17,31 @@ app.get('/health-check', (req, res) => {
 });
 
 
-
+app.all('/api/auth/*path',toNodeHandler(auth));
 
 app.use(express.json({limit:"16kb"}));
 app.use(express.urlencoded({extended:true,limit:"16kb"}));
 app.use(express.static("public"));
 app.use(cookieParser());
-app.post('/api/auth/login', asyncHandler(async(req, res) => {
+
+//cant use /api/auth/*path because of the way better-auth works
+app.post('/api/login', asyncHandler(async(req, res) => {
     const { email, password,username } = req.body;
     if (!email || !password) {
         return res.status(400).json({ error: "Email and password are required" });
 
     }
     // console.log('lolo:',req.body);
-    const response=await auth.api.signInUsername({
+    const response=await auth.api.signInEmail({
         body:{
             password,
-            username,
+            email,
 
         }
     })
     res.json({message:"Login successful!",data:response});
 }));
-app.post('/api/auth/signup', asyncHandler(async(req, res) => {
+app.post('/api/signup', asyncHandler(async(req, res) => {
     const { email, password, name, username } = req.body;
     if (!email || !password) {
         return res.status(400).json({ error: "Email and password are required" });
@@ -67,7 +69,7 @@ app.post('/api/auth/signup', asyncHandler(async(req, res) => {
 
 
 
-app.all('/api/auth/*path',toNodeHandler(auth));
+
 app.get("/api/me", asyncHandler(async (req, res) => {
     console.log("headers:", req.headers); // Log the headers for debugging
     try{

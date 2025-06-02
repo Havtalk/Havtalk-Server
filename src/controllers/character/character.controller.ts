@@ -10,6 +10,7 @@ import {
 import { auth } from "../../lib/auth";
 import { fromNodeHeaders } from "better-auth/node";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { uploadOnCloudinary } from "../../lib/cloudinary";
 
 export const getAllCharacters = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -75,11 +76,44 @@ export const addCharacter = asyncHandler(async (req: Request, res: Response) => 
         if (!session?.user?.id) {
             return res.status(401).json({ error: 'Unauthorized' });
         }
+        console.log("Received request to add character:", req.body); 
 
-        const { name, personality, description, environment, additionalInfo, avatar, isPublic } = req.body;
+        const { 
+            name, 
+            personality, 
+            description, 
+            environment, 
+            additionalInfo, 
+            avatar, 
+            isPublic,
+            tags,
+            backstory,
+            role,
+            goals,
+            quirks,
+            tone,
+            speechStyle,
+            exampleDialogues
+        } = req.body;
 
         if (!name || !personality || !description) {
             return res.status(400).json({ error: 'Name, personality, and description are required' });
+        }
+        if (avatar && !req.file) {
+            return res.status(400).json({ error: 'Avatar file is required' });
+        }
+        let avatarUrl;
+        if (req.file) {
+            const file = req.file.path;
+            if (!file) {
+                return res.status(400).json({ error: 'Avatar file is required' });
+            }
+            avatarUrl = await uploadOnCloudinary(file, session.user.id, "characters");
+            if (!avatarUrl) {
+                return res.status(500).json({ error: 'Failed to upload avatar' });
+            }
+        } else {
+            avatarUrl = null;
         }
 
         const character = await addCharacterService(
@@ -89,8 +123,16 @@ export const addCharacter = asyncHandler(async (req: Request, res: Response) => 
             description, 
             environment, 
             additionalInfo, 
-            avatar,
-            isPublic
+            avatarUrl?.secure_url,
+            Boolean(isPublic),
+            tags,
+            backstory,
+            role,
+            goals,
+            quirks,
+            tone,
+            speechStyle,
+            exampleDialogues
         );
 
         return res.status(201).json({ message:'Character created succesfully',character });
@@ -116,7 +158,35 @@ export const updateCharacter = asyncHandler(async (req: Request, res: Response) 
             return res.status(400).json({ error: 'Character ID is required' });
         }
 
-        const { name, personality, description, avatar, environment, isPublic } = req.body;
+        const { 
+            name, 
+            personality, 
+            description, 
+            avatar, 
+            environment, 
+            isPublic,
+            tags,
+            backstory,
+            role,
+            goals,
+            quirks,
+            tone,
+            speechStyle,
+            exampleDialogues,
+            additionalInfo
+        } = req.body;
+
+        let avatarUrl = avatar; // Keep existing avatar if no new file uploaded
+        
+        // Handle new avatar upload
+        if (req.file) {
+            const file = req.file.path;
+            const uploadResult = await uploadOnCloudinary(file, session.user.id, "characters");
+            if (!uploadResult) {
+                return res.status(500).json({ error: 'Failed to upload avatar' });
+            }
+            avatarUrl = uploadResult.secure_url;
+        }
 
         const character = await updateCharacterService(
             session.user.id, 
@@ -124,9 +194,18 @@ export const updateCharacter = asyncHandler(async (req: Request, res: Response) 
             name, 
             personality, 
             description,
-            avatar,
+            avatarUrl,
             environment,
-            isPublic
+            Boolean(isPublic),
+            tags,
+            backstory,
+            role,
+            goals,
+            quirks,
+            tone,
+            speechStyle,
+            exampleDialogues,
+            additionalInfo
         );
 
         return res.status(200).json({ character });

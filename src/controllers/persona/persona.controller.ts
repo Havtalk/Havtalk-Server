@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { auth } from '../../lib/auth';
 import { fromNodeHeaders } from 'better-auth/node';
+import { uploadOnCloudinary } from '../../lib/cloudinary';
 
 export const getAllPersonas = asyncHandler(async (req: Request, res: Response) => {
     try {
@@ -32,10 +33,27 @@ export const createPersona = asyncHandler(async (req: Request, res: Response) =>
             return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const { name, description, personality, avatar } = req.body;
+        const { name, description, personality, avatarUrl } = req.body;
 
         if (!name || !description || !personality) {
             return res.status(400).json({ error: 'Name, description, and personality are required' });
+        }
+
+        let finalAvatarUrl = null;
+
+        // Handle file upload
+        if (req.file) {
+            const file = req.file.path;
+            if (file) {
+                const uploadResult = await uploadOnCloudinary(file, session.user.id, "personas");
+                if (uploadResult) {
+                    finalAvatarUrl = uploadResult.secure_url;
+                }
+            }
+        } 
+        // Handle avatar URL provided directly
+        else if (avatarUrl) {
+            finalAvatarUrl = avatarUrl;
         }
 
         const persona = await createPersonaService(
@@ -43,7 +61,7 @@ export const createPersona = asyncHandler(async (req: Request, res: Response) =>
             name,
             description,
             personality,
-            avatar
+            finalAvatarUrl
         );
 
         return res.status(201).json({ message: 'Persona created successfully', persona });

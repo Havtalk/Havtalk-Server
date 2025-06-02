@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { createAuthMiddleware, username ,bearer} from "better-auth/plugins";
+import { createAuthMiddleware, username ,bearer, admin} from "better-auth/plugins";
 import prisma from "./prisma";
  
  
@@ -29,8 +29,13 @@ export const auth = betterAuth({
     }, 
     plugins: [
         username(),
-        bearer()
+        bearer(),
+        admin()
 
-    ],    
+    ],
+    trustedOrigins:[
+        process.env.CORS_ORIGIN || "http://localhost:3000",
+        // process.env.CORS_ORIGIN || "http://localhost:8080",
+    ] 
 });
 

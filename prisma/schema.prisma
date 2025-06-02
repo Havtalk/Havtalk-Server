@@ -29,63 +29,90 @@ model User {
   isVerified    Boolean       @default(false)
   refreshToken  String?
   name          String
-  emailVerified Boolean @default(false)
+  emailVerified Boolean       @default(false)
   image         String?
-  updatedAt     DateTime     @updatedAt
+  updatedAt     DateTime      @updatedAt
   accounts      Account[]
 
   Session         Session[]
   displayUsername String?
   personas        UserPersona[] @relation("UserToUserPersona")
 
+  Favorites         Favorites[]
+  CharacterShowcase CharacterShowcase[]
+  PersonaShowcase   PersonaShowcase[]
+  role              String?
+  banned            Boolean?
+  banReason         String?
+  banExpires        DateTime?
+
   @@map("user")
 }
 
 model Character {
-  id       String        @id @default(uuid())
-  name     String
-  personality  String
-  description String
-  environment String?
-  avatar   String?
-  additionalInfo String?
-  isPublic Boolean       @default(false)
-  owner    User          @relation(fields: [ownerId], references: [id], name: "UserCharacters")
-  sessions ChatSession[]
-  ownerId  String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  id               String   @id @default(uuid())
+  name             String
+  personality      String
+  description      String
+  environment      String?
+  avatar           String?
+  additionalInfo   String?
+  tags             String[] // new: for filtering (e.g., "fantasy", "romance", "villain")
+  // new: additional information like "loves cats", "hates coffee"
+  backstory        String? // new: background story of the character
+  role             String? // new: e.g., "Cyberpunk Hacker", "Fantasy Mage"
+  goals            String? // new: motivations and current objectives
+  quirks           String? // new: small character details like "hates water" or "says 'yo' every sentence"
+  tone             String? // new: "friendly", "formal", etc.
+  speechStyle      String? // new: "speaks in riddles", "like Shakespeare", etc.
+  exampleDialogues Json? // new: array of user-AI sample dialogues for few-shot prompting
+
+  owner     User          @relation(fields: [ownerId], references: [id], name: "UserCharacters")
+  sessions  ChatSession[]
+  ownerId   String
+  isPublic  Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  Favorites Favorites[]
+
+  CharacterShowcase CharacterShowcase[]
 }
 
 model ChatSession {
-  id          String        @id @default(uuid())
-  userId      String
-  characterId String
-  environment String?
-  user        User          @relation(fields: [userId], references: [id])
+  id            String        @id @default(uuid())
+  userId        String
+  characterId   String
+  environment   String?
+  user          User          @relation(fields: [userId], references: [id])
   userpersonaId String?
-  userpersona  UserPersona? @relation(fields: [userpersonaId], references: [id])
-  character   Character     @relation(fields: [characterId], references: [id])
-  messages    ChatMessage[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  isPublic    Boolean       @default(false)
-  title       String?
+  userpersona   UserPersona?  @relation(fields: [userpersonaId], references: [id])
+  character     Character     @relation(fields: [characterId], references: [id])
+  messages      ChatMessage[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  isPublic      Boolean       @default(false)
+  title         String?
 }
 
 model UserPersona {
-  id          String        @id @default(uuid())
+  id          String   @id @default(uuid())
   userId      String
   name        String
   description String
   avatar      String?
   personality String
-  createdAt   DateTime      @default(now())
-  user        User          @relation(fields: [userId], references: [id], name: "UserToUserPersona")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], name: "UserToUserPersona")
+
+  isPublic  Boolean @default(false)
+  backstory String? // new: background story of the persona
 
   ChatSession ChatSession[]
-}
 
+  PersonaShowcase PersonaShowcase[]
+}
 
 model ChatMessage {
   id        String      @id @default(uuid())
@@ -112,6 +139,8 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@map("session")
@@ -145,4 +174,42 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+model Favorites {
+  id          String    @id @default(uuid())
+  userId      String
+  characterId String
+  user        User      @relation(fields: [userId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([userId, characterId])
+}
+
+model CharacterShowcase {
+  id          String    @id @default(uuid())
+  addedBy     String
+  characterId String
+  isActive    Boolean   @default(true)
+  user        User      @relation(fields: [addedBy], references: [id])
+  character   Character @relation(fields: [characterId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([addedBy, characterId])
+}
+
+model PersonaShowcase {
+  id        String      @id @default(uuid())
+  addedBy   String
+  personaId String
+  isActive  Boolean     @default(true)
+  user      User        @relation(fields: [addedBy], references: [id])
+  persona   UserPersona @relation(fields: [personaId], references: [id])
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([addedBy, personaId])
 }
