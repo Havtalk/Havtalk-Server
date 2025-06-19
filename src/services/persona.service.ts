@@ -69,11 +69,27 @@ const deletePersonaService = async (userId: string, personaId: string) => {
     return true;
 }
 
+const setCurrentPersonaService = async (userId: string, personaId: string) => {
+    if (!userId) throw new Error('User ID is required');
+    // if (!personaId) throw new Error('Persona ID is required');
+    const persona= await prisma.userDetails.update({
+        where: { userId: userId },
+        data: {
+            currentPersonaId: personaId,
+        }
+    });
+    if (!persona) {
+        throw new Error('Some error occurred while setting current persona');
+    }
+    return persona;
+}
+
 export {
     getAllPersonasService,
     createPersonaService,
     updatePersonaService,
     deletePersonaService,
+    setCurrentPersonaService
 };
 
 

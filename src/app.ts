@@ -77,9 +77,9 @@ app.get("/api/me", asyncHandler(async (req, res) => {
         headers: fromNodeHeaders(req.headers),
         
     });
-   return res.json(session);
+   return res.status(200).json(session);
     }catch(error){
-        res.json(error)
+        res.status(500).json(error)
     }
     
    
@@ -90,9 +90,17 @@ app.get("/api/me", asyncHandler(async (req, res) => {
 import characterRouter from "./routes/character.routes";
 import personaRouter from "./routes/persona.routes";
 import chatSessionRouter from "./routes/chatsession.routes";
+import userRouter from "./routes/user.routes";
+import adminRouter from "./routes/admin.routes";
+import avatarGenerateRouter from "./routes/avatar-generate.routes";
+
 
 app.use("/api/character", characterRouter);
 app.use("/api/persona", personaRouter);
 app.use("/api/chatsession", chatSessionRouter);
+app.use("/api/user", userRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/avatar", avatarGenerateRouter);
+
 
 export {app};

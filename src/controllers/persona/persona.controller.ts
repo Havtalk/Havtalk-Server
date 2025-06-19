@@ -1,4 +1,4 @@
-import {createPersonaService,deletePersonaService,getAllPersonasService,updatePersonaService} from '../../services/persona.service';
+import {createPersonaService,deletePersonaService,getAllPersonasService,updatePersonaService,setCurrentPersonaService} from '../../services/persona.service';
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../utils/asyncHandler';
 import { auth } from '../../lib/auth';
@@ -86,8 +86,25 @@ export const updatePersona = asyncHandler(async (req: Request, res: Response) =>
         if (!personaId) {
             return res.status(400).json({ error: 'Persona ID is required' });
         }
+        console.log(req.body,personaId);
 
         const { name, description, personality, avatar } = req.body;
+        let finalAvatarUrl = null;
+
+        // Handle file upload
+        if (req.file) {
+            const file = req.file.path;
+            if (file) {
+                const uploadResult = await uploadOnCloudinary(file, session.user.id, "personas");
+                if (uploadResult) {
+                    finalAvatarUrl = uploadResult.secure_url;
+                }
+            }
+        } 
+        // Handle avatar URL provided directly
+        else if (avatar) {
+            finalAvatarUrl = avatar;
+        }
 
         const persona = await updatePersonaService(
             session.user.id,
@@ -95,7 +112,7 @@ export const updatePersona = asyncHandler(async (req: Request, res: Response) =>
             name,
             description,
             personality,
-            avatar
+            finalAvatarUrl
         );
 
         return res.status(200).json({ message: 'Persona updated successfully', persona });
@@ -125,6 +142,30 @@ export const deletePersona = asyncHandler(async (req: Request, res: Response) =>
         return res.status(200).json({ message: 'Persona deleted successfully' });
     } catch (error: any) {
         console.error("Error deleting persona:", error);
+        return res.status(500).json({ error: error.message || 'Something went wrong' });
+    }
+});
+
+export const setCurrentPersona = asyncHandler(async (req: Request, res: Response) => {
+    try {
+        const session = await auth.api.getSession({
+            headers: fromNodeHeaders(req.headers),
+        });
+        
+        if (!session?.user?.id) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const personaId = req.body.personaId;
+        
+        // if (!personaId) {
+        //     return res.status(400).json({ error: 'Persona ID is required' });
+        // }
+
+        const updatedPersona = await setCurrentPersonaService(session.user.id, personaId);
+        return res.status(200).json({ message: 'Current persona set successfully', updatedPersona });
+    } catch (error: any) {
+        console.error("Error setting current persona:", error);
         return res.status(500).json({ error: error.message || 'Something went wrong' });
     }
 });

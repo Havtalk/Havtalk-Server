@@ -123,6 +123,8 @@ export const updatePersonaInChatSession = asyncHandler(async (req: Request, res:
         if (!updatedChat) {
             return res.status(500).json({ error: 'Failed to update persona in chat session' });
         }
+        return res.status(200).json({ message: 'Persona updated successfully in chat session', chat: updatedChat });
+
     } catch (error: any) {
         console.error("Error updating persona in chat session:", error);
         return res.status(500).json({ error: error.message || 'Something went wrong' });

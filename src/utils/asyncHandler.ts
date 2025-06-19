@@ -8,7 +8,8 @@ const asyncHandler = (fnc: AsyncFunction) => async (req: Request | FileRequest, 
         await fnc(req, res, next);
 
     } catch (err: any) {
-        res.status(err.code || 500).json({
+        console.error('Error in asyncHandler:', err);
+        res.status(err.statusCode || 500).json({
             success: false,
             message: err.message
         })

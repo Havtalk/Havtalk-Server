@@ -7,8 +7,20 @@ const getChats = async (userId: string) => {
         where: { userId: userId },
         include: {
             character: true,
-            userpersona: true, // Include the persona if there is one
-        }
+            userpersona: true, 
+            messages: {
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                take: 1, 
+            },
+            _count: {
+                select: { messages: true },
+            }
+        },
+        orderBy: {
+            updatedAt: 'desc', 
+        },
     });
     return chats;
 }
@@ -46,6 +58,13 @@ const getChatDetails = async (userId: string, chatId: string) => {
 const startChat = async (userId: string, characterId: string, userPersonaId?: string) => {
     if (!userId) throw new Error('User ID is required');
     if (!characterId) throw new Error('Character ID is required');
+    const existingChat = await prisma.chatSession.findFirst({
+        where: { userId: userId, characterId: characterId },
+    });
+    
+    if (existingChat) {
+        return existingChat; 
+    }
     
     const chat = await prisma.chatSession.create({
         data: {

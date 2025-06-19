@@ -47,6 +47,39 @@ model User {
   banExpires        DateTime?
 
   @@map("user")
+  UserDetails UserDetails[] @relation(name: "UserToUserDetails")
+  UserRequest UserRequest[]
+}
+
+model UserDetails{
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  bio         String?
+  personality String?
+  currentPersonaId String?
+  userPersona UserPersona? @relation(fields: [currentPersonaId], references: [id], name: "UserToCurrentUserPersona")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], name: "UserToUserDetails")
+}
+
+model UserRequest {
+  id          String   @id @default(uuid())
+  userId      String
+  characterId String
+  status      RequestStatus   @default(PENDING)
+  user        User     @relation(fields: [userId], references: [id])
+  character   Character @relation(fields: [characterId], references: [id])
+  adminNote String? 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model Character {
@@ -77,6 +110,8 @@ model Character {
   Favorites Favorites[]
 
   CharacterShowcase CharacterShowcase[]
+
+  UserRequest UserRequest[]
 }
 
 model ChatSession {
@@ -112,6 +147,8 @@ model UserPersona {
   ChatSession ChatSession[]
 
   PersonaShowcase PersonaShowcase[]
+
+  UserDetails UserDetails[] @relation(name: "UserToCurrentUserPersona")
 }
 
 model ChatMessage {
