@@ -67,9 +67,6 @@ app.post('/api/signup', asyncHandler(async(req, res) => {
     
 }));
 
-
-
-
 app.get("/api/me", asyncHandler(async (req, res) => {
     console.log("headers:", req.headers); // Log the headers for debugging
     try{
@@ -86,13 +83,13 @@ app.get("/api/me", asyncHandler(async (req, res) => {
    
 }));
 
-
 import characterRouter from "./routes/character.routes";
 import personaRouter from "./routes/persona.routes";
 import chatSessionRouter from "./routes/chatsession.routes";
 import userRouter from "./routes/user.routes";
 import adminRouter from "./routes/admin.routes";
 import avatarGenerateRouter from "./routes/avatar-generate.routes";
+import guestRouter from "./routes/guest.routes";
 
 
 app.use("/api/character", characterRouter);
@@ -101,6 +98,7 @@ app.use("/api/chatsession", chatSessionRouter);
 app.use("/api/user", userRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/avatar", avatarGenerateRouter);
+app.use("/api/guest", guestRouter);
 
 
 export {app};

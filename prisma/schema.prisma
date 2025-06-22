@@ -250,3 +250,12 @@ model PersonaShowcase {
 
   @@unique([addedBy, personaId])
 }
+
+model GuestSession {
+  id           String   @id @default(uuid())
+  guestToken   String?   
+  createdAt    DateTime @default(now())
+  messageCount Int      @default(0)
+  lastUsed     DateTime @updatedAt
+}
+

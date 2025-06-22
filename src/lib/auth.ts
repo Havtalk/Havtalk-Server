@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { createAuthMiddleware, username ,bearer, admin} from "better-auth/plugins";
 import prisma from "./prisma";
 import { addUserDetailsService,addUserDetailServiceGoogle } from "../services/user.service";
+import { sendResetPasswordEmail } from "../utils/sendResetPasswordEmail";
  
  
 export const auth = betterAuth({
@@ -40,6 +41,9 @@ export const auth = betterAuth({
     },
     emailAndPassword: {  
         enabled: true,
+        sendResetPassword: async ({user, url, token}, request) => {
+            await sendResetPasswordEmail(user.email, url);
+        },
     },
     socialProviders: { 
         google: {

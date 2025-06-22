@@ -36,7 +36,7 @@ const getAllPublicCharactersService = async () => {
             }
         },
         orderBy: {
-            createdAt:'desc'
+            updatedAt:'desc'
         },
     });
     return characters;
@@ -47,9 +47,12 @@ const getCharacterDetailsService = async (userId: string, characterId: string) =
     if (!characterId) throw new Error('Character ID is required');
     console.log('Fetching character details for user:', userId, 'characterId:', characterId);
     const character = await prisma.character.findFirst({
-        where: { id: characterId, ownerId: userId },
+        where: { id: characterId },
     });
     if (!character) {
+        throw new Error('Character not found');
+    }
+    if (!character.isPublic&&character.ownerId != userId) {
         throw new Error('Not allowed to access this character');
     }
     

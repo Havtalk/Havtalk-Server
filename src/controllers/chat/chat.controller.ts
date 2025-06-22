@@ -5,7 +5,7 @@ import { fromNodeHeaders } from "better-auth/node";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { MessageRole } from "../../../generated/prisma";
 import { createSystemPrompt, generateResponse, generateStreamingResponse } from "../../services/llm.service";
-import { Content, Part } from "@google/generative-ai";
+
 
 export const getAllUserChats = asyncHandler(async (req: Request, res: Response) => {
     try {
