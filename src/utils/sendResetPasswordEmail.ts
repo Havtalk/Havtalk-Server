@@ -11,7 +11,7 @@ export const sendResetPasswordEmail = async (email: string, resetLink: string) =
     });
 
     const response = await resend.emails.send({
-      from: "HavTalk <onboarding@resend.dev>",
+      from: "HavTalk <noreply@mail.havtalk.site>",
         to: email,
         subject: "Reset Your HavTalk Password",
         html: htmlContent,

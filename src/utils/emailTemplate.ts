@@ -15,7 +15,7 @@ export function getPasswordResetHtml({
     <link
       rel="preload"
       as="image"
-      href="https://new.email/static/app/placeholder.png" />
+      href="https://www.havtalk.site/logo.png" />
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta name="x-apple-disable-message-reformatting" />
   </head>
@@ -44,14 +44,15 @@ export function getPasswordResetHtml({
               cellpadding="0"
               cellspacing="0"
               role="presentation"
-              style="text-align:center;margin-bottom:32px">
+              style="text-align:center;margin-bottom:5px">
               <tbody>
                 <tr>
                   <td>
                     <img
-                      alt="Company Logo"
-                      src="https://new.email/static/app/placeholder.png"
+                      alt="Havtalk Logo"
+                      src="https://www.havtalk.site/logo.png"
                       style="width:100%;height:auto;object-fit:cover;max-width:200px;margin-left:auto;margin-right:auto;display:block;outline:none;border:none;text-decoration:none" />
+                      <h1>Havtalk</h1>
                   </td>
                 </tr>
               </tbody>
@@ -98,7 +99,7 @@ export function getPasswordResetHtml({
                       style="font-size:16px;color:rgb(55,65,81);margin-bottom:0px;margin:0px;line-height:24px;margin-top:0px;margin-left:0px;margin-right:0px">
                       Someone requested a password reset for your account
                       associated with
-                      <!-- -->sohamhaldar25@gmail.com<!-- -->. If this was you,
+                      <!-- -->${email}<!-- -->. If this was you,
                       click the button below to reset your password.
                     </p>
                     <p
@@ -204,10 +205,10 @@ export function getPasswordResetHtml({
                       style="font-size:14px;color:rgb(75,85,99);margin:0px;line-height:24px;margin-bottom:0px;margin-top:0px;margin-left:0px;margin-right:0px">
                       Need help? Contact our support team at<!-- -->
                       <a
-                        href="mailto:support@company.com"
+                        href="mailto:support@havtalk.site"
                         style="color:rgb(37,99,235);text-decoration-line:underline"
                         target="_blank"
-                        >support@company.com</a
+                        >support@havtalk.site</a
                       >
                     </p>
                   </td>
@@ -231,12 +232,13 @@ export function getPasswordResetHtml({
                       <!-- -->${email}<!-- -->
                     </p>
                     <p
-                      style="font-size:12px;color:rgb(107,114,128);text-align:center;margin:0px;margin-bottom:0px;line-height:24px;margin-top:0px;margin-left:0px;margin-right:0px">
-                      Company Name, 123 Business Street, City, State 12345
+                      style="font-size:12px;color:rgb(107,114,128);text-align:center;margin:0px;line-height:24px;margin-bottom:0px;margin-top:0px;margin-left:0px;margin-right:0px">
+                      If you did not request a password reset, please ignore
+                      this email.
                     </p>
                     <p
                       style="font-size:12px;color:rgb(107,114,128);text-align:center;margin:0px;line-height:24px;margin-bottom:0px;margin-top:0px;margin-left:0px;margin-right:0px">
-                      © ${year} Company Name. All rights reserved.
+                      © ${year} Havtalk. All rights reserved.
                     </p>
                   </td>
                 </tr>

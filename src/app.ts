@@ -32,7 +32,7 @@ import avatarGenerateRouter from "./routes/avatar-generate.routes";
 import guestRouter from "./routes/guest.routes";
 import customAuthRouter from "./routes/custom-auth.routes";
 
-app.use("/custom-auth", customAuthRouter); // Custom auth routes
+app.use("/api/custom-auth", customAuthRouter); // Custom auth routes
 app.use("/api/character", characterRouter);
 app.use("/api/persona", personaRouter);
 app.use("/api/chatsession", chatSessionRouter);
