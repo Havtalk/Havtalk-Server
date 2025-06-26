@@ -12,6 +12,14 @@ export const auth = betterAuth({
         provider: "postgresql",
 
     }),
+    advanced: {
+        crossSubDomainCookies: {
+            enabled: true,
+            domain: process.env.CORS_ORIGIN
+                ? '.' + new URL(process.env.CORS_ORIGIN).hostname.split('.').slice(-2).join('.')
+                : "localhost",
+        }
+    },
     hooks: {
         after: createAuthMiddleware(async (ctx) => {
             if(ctx.path.startsWith("/sign-up")){
