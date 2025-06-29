@@ -10,7 +10,7 @@ The **backend API** for HavTalk - an immersive roleplay platform where users can
 
 Built with modern technologies for scalability, performance, and reliability.
 
-🔗 **Frontend Repository:** [HavTalk Frontend](https://github.com/sohamhaldar/havtalk)
+🔗 **Frontend Repository:** [HavTalk Frontend](https://github.com/Havtalk/Havtalk-Web-Client)
 
 ---
 
