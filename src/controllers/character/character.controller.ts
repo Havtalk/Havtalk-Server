@@ -18,15 +18,15 @@ import { getCharacterShowcaseService } from "../../services/admin.service";
 export const getPublicCharacterShowcase = asyncHandler(async (req: Request, res: Response) => {
     try {
         console.log("Received request to get character showcase");
-        const session = await auth.api.getSession({
-            headers:fromNodeHeaders(req.headers),
-        });
-        if (!session) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
-        if (!session?.user?.id) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
+        // const session = await auth.api.getSession({
+        //     headers:fromNodeHeaders(req.headers),
+        // });
+        // if (!session) {
+        //     return res.status(401).json({ error: 'Unauthorized' });
+        // }
+        // if (!session?.user?.id) {
+        //     return res.status(401).json({ error: 'Unauthorized' });
+        // }
         const result = await getCharacterShowcaseService();
         if (!result) {
             return res.status(500).json({ error: 'Failed to fetch character showcase' });

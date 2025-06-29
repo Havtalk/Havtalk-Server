@@ -1,6 +1,6 @@
 services:
   havtalk-server:
-    image: sohamhaldar/havtalk-server:02
+    image: sohamhaldar/havtalk-server:03
     container_name: havtalk-server
     restart: unless-stopped
     ports:
