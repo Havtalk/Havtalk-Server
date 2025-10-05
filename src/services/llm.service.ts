@@ -142,12 +142,12 @@ Respond as ${character.name} would to the user, maintaining your unique voice, p
 const generateResponse = async (userMessage: string, history: Content[], systemPrompt: string | Part | Content | undefined) => {
   try {
     const model = gemini.getGenerativeModel({
-      model: MODEL_CONFIG['gemini:1.5-flash'].geminiModel,
+      model: MODEL_CONFIG['gemini:2.5-flash'].geminiModel,
       safetySettings: geminiSafetySettings,
       systemInstruction: systemPrompt,
       generationConfig: {
-        temperature: MODEL_CONFIG['gemini:1.5-flash'].temperature,
-        maxOutputTokens: MODEL_CONFIG['gemini:1.5-flash'].maxTokens
+        temperature: MODEL_CONFIG['gemini:2.5-flash'].temperature,
+        maxOutputTokens: MODEL_CONFIG['gemini:2.5-flash'].maxTokens
       }
     });
 
@@ -167,12 +167,12 @@ const generateResponse = async (userMessage: string, history: Content[], systemP
 const generateStreamingResponse = async (userMessage: string, history: Content[], systemPrompt: string | Part | Content | undefined) => {
   try {
     const model = gemini.getGenerativeModel({
-      model: MODEL_CONFIG['gemini:1.5-flash'].geminiModel,
+      model: MODEL_CONFIG['gemini:2.5-flash'].geminiModel,
       safetySettings: geminiSafetySettings,
       systemInstruction: systemPrompt,
       generationConfig: {
-        temperature: MODEL_CONFIG['gemini:1.5-flash'].temperature,
-        maxOutputTokens: MODEL_CONFIG['gemini:1.5-flash'].maxTokens
+        temperature: MODEL_CONFIG['gemini:2.5-flash'].temperature,
+        maxOutputTokens: MODEL_CONFIG['gemini:2.5-flash'].maxTokens
       }
     });
 

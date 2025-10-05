@@ -13,6 +13,12 @@ export const MODEL_CONFIG = {
         api: 'gemini',
         geminiModel: 'gemini-1.5-flash'
     },
+    'gemini:2.5-flash': {
+        temperature: 0.7,
+        maxTokens: 500,
+        api: 'gemini',
+        geminiModel: 'gemini-2.5-flash'
+    },
     'gemini:1.5-pro': {
         temperature: 0.7,
         maxTokens: 500,
